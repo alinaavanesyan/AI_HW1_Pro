@@ -108,7 +108,7 @@ col1, col2 = st.columns(2)
 if col1.button("🔍 Показать EDA по TRAIN"):
     try:
         df_train_local = pd.read_csv("data/df_train.csv")
-        del df_train_local['Unnamed: 0']
+        df_train_local.drop(columns=["Unnamed: 0"], inplace=True, errors="ignore")
         st.success("Загружен df_train.csv")
         
         st.subheader("Первые строки train")
@@ -140,7 +140,7 @@ if col1.button("🔍 Показать EDA по TRAIN"):
 if col2.button("🔍 Показать EDA по TEST"):
     try:
         df_test_local = pd.read_csv("data/df_test.csv")
-        del df_test_local['Unnamed: 0']
+        df_test_local.drop(columns=["Unnamed: 0"], inplace=True, errors="ignore")
         
         st.success("Загружен df_test.csv")
 
@@ -175,7 +175,7 @@ df = None
 if uploaded_data is not None:
     try:
         df = pd.read_csv(uploaded_data)
-        del df['Unnamed: 0']
+        df.drop(columns=["Unnamed: 0"], inplace=True, errors="ignore")
         st.success(f"Файл загружен: {uploaded_data.name}")
     except Exception as e:
         st.error(f"Ошибка при чтении CSV: {e}")
