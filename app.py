@@ -175,6 +175,7 @@ df = None
 if uploaded_data is not None:
     try:
         df = pd.read_csv(uploaded_data)
+        del df['Unnamed: 0']
         st.success(f"Файл загружен: {uploaded_data.name}")
     except Exception as e:
         st.error(f"Ошибка при чтении CSV: {e}")
