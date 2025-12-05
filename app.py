@@ -101,6 +101,75 @@ pipeline = load_pipeline()
 
 st.title("Предсказание стоимости автомобиля (Ridge + OHE)")
 
+st.header("📂 Быстрый EDA по готовым данным")
+
+col1, col2 = st.columns(2)
+
+if col1.button("🔍 Показать EDA по TRAIN"):
+    try:
+        df_train_local = pd.read_csv("data/df_train.csv")
+        del df_train_local['Unnamed: 0']
+        st.success("Загружен df_train.csv")
+        
+        st.subheader("Первые строки train")
+        st.write(df_train_local.head())
+
+        num_cols_tr = df_train_local.select_dtypes(include=np.number).columns.tolist()
+        cat_cols_tr = df_train_local.select_dtypes(include="object").columns.tolist()
+
+        st.subheader("Распределение числового признака (train)")
+        if num_cols_tr:
+            selected = st.selectbox("Выберите числовой признак", num_cols_tr, key="train_num")
+            st.bar_chart(df_train_local[selected])
+
+        st.subheader("Распределение категориального признака (train)")
+        if cat_cols_tr:
+            selected = st.selectbox("Выберите категориальный признак", cat_cols_tr, key="train_cat")
+            st.bar_chart(df_train_local[selected].value_counts())
+
+        if len(num_cols_tr) > 1:
+            st.subheader("Корреляционная матрица (train)")
+            corr = df_train_local[num_cols_tr].corr()
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.heatmap(corr, annot=False, cmap="coolwarm", ax=ax)
+            st.pyplot(fig)
+
+    except Exception as e:
+        st.error(f"Ошибка загрузки train: {e}")
+
+if col2.button("🔍 Показать EDA по TEST"):
+    try:
+        df_test_local = pd.read_csv("data/df_test.csv")
+        del df_test_local['Unnamed: 0']
+        
+        st.success("Загружен df_test.csv")
+
+        st.subheader("Первые строки test")
+        st.write(df_test_local.head())
+
+        num_cols_ts = df_test_local.select_dtypes(include=np.number).columns.tolist()
+        cat_cols_ts = df_test_local.select_dtypes(include="object").columns.tolist()
+
+        st.subheader("Распределение числового признака (test)")
+        if num_cols_ts:
+            selected = st.selectbox("Выберите числовой признак", num_cols_ts, key="test_num")
+            st.bar_chart(df_test_local[selected])
+
+        st.subheader("Распределение категориального признака (test)")
+        if cat_cols_ts:
+            selected = st.selectbox("Выберите категориальный признак", cat_cols_ts, key="test_cat")
+            st.bar_chart(df_test_local[selected].value_counts())
+
+        if len(num_cols_ts) > 1:
+            st.subheader("Корреляционная матрица (test)")
+            corr = df_test_local[num_cols_ts].corr()
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.heatmap(corr, annot=False, cmap="coolwarm", ax=ax)
+            st.pyplot(fig)
+
+    except Exception as e:
+        st.error(f"Ошибка загрузки test: {e}")
+
 uploaded_data = st.file_uploader("Загрузите CSV-файл для анализа и предсказаний", type=["csv"], key="eda_and_predict")
 df = None
 if uploaded_data is not None:
